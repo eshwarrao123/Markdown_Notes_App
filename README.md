@@ -2,8 +2,8 @@
 
 A full-stack Markdown Notes application built using React, Node.js, Express, and SQLite.
 - Frontend Deployed URL : https://markdown-notes-app-mocha-nu.vercel.app/
-- Backend Deployed URL : (in progress)
-#### Note : Backend deployment encountered a known SQLite compatibility issue (GLIBC mismatch) on Render. The application works fully in local setup and is demonstrated in the demo video.
+- Backend Deployed URL : https://markdown-notes-backend-pq1k.onrender.com/notes 
+
 
 ## Features
 
