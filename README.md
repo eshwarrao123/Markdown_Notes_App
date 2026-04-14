@@ -45,4 +45,4 @@ A full-stack Markdown Notes application built using React, Node.js, Express, and
 
 ## Demo
 
-(Attach demo video link here)
+https://www.loom.com/share/5562f39c7c3a4e1dbd532373a8f121f6
