@@ -12,7 +12,7 @@ function App() {
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/notes')
+    axios.get('https://markdown-notes-backend-pq1k.onrender.com/notes')
       .then((res) => setNotes(res.data))
       .catch((err) => console.error('Error fetching notes:', err));
   }, []);
@@ -22,7 +22,7 @@ function App() {
     if (!selectedNote || !title || !content) return;
 
     const timer = setTimeout(() => {
-      axios.put(`http://localhost:5000/notes/${selectedNote.id}`, { title, content })
+      axios.put(`https://markdown-notes-backend-pq1k.onrender.com/notes/${selectedNote.id}`, { title, content })
         .then(() => {
           setNotes((prev) =>
             prev.map((n) => n.id === selectedNote.id ? { ...n, title, content } : n)
@@ -45,7 +45,7 @@ function App() {
     if (!title || !content) return;
 
     if (selectedNote) {
-      axios.put(`http://localhost:5000/notes/${selectedNote.id}`, { title, content })
+      axios.put(`https://markdown-notes-backend-pq1k.onrender.com/notes/${selectedNote.id}`, { title, content })
         .then(() => {
           setNotes(notes.map((n) =>
             n.id === selectedNote.id ? { ...n, title, content } : n
@@ -53,7 +53,7 @@ function App() {
         })
         .catch((err) => console.error('Error updating note:', err));
     } else {
-      axios.post('http://localhost:5000/notes', { title, content })
+      axios.post('https://markdown-notes-backend-pq1k.onrender.com/notes', { title, content })
         .then((res) => {
           setNotes([res.data, ...notes]);
           setSelectedNote(res.data);
@@ -71,7 +71,7 @@ function App() {
   const handleDelete = () => {
     if (!selectedNote) return;
 
-    axios.delete(`http://localhost:5000/notes/${selectedNote.id}`)
+    axios.delete(`https://markdown-notes-backend-pq1k.onrender.com/notes/${selectedNote.id}`)
       .then(() => {
         setNotes(notes.filter((n) => n.id !== selectedNote.id));
         handleNew();
