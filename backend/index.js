@@ -9,14 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/notes', (req, res) => {
-    const sql = 'SELECT * FROM notes ORDER BY created_at DESC';
-
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.status(200).json(rows);
-    });
+    try {
+        const notes = db.prepare('SELECT * FROM notes ORDER BY created_at DESC').all();
+        res.status(200).json(notes);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.post('/notes', (req, res) => {
@@ -26,18 +24,12 @@ app.post('/notes', (req, res) => {
         return res.status(400).json({ error: 'Title and content are required' });
     }
 
-    const sql = 'INSERT INTO notes (title, content) VALUES (?, ?)';
-
-    db.run(sql, [title, content], function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.status(201).json({
-            id: this.lastID,
-            title,
-            content
-        });
-    });
+    try {
+        const result = db.prepare('INSERT INTO notes (title, content) VALUES (?, ?)').run(title, content);
+        res.status(201).json({ id: result.lastInsertRowid, title, content });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.put('/notes/:id', (req, res) => {
@@ -48,37 +40,33 @@ app.put('/notes/:id', (req, res) => {
         return res.status(400).json({ error: 'Title and content are required' });
     }
 
-    const sql = 'UPDATE notes SET title = ?, content = ? WHERE id = ?';
+    try {
+        const result = db.prepare('UPDATE notes SET title = ?, content = ? WHERE id = ?').run(title, content, id);
 
-    db.run(sql, [title, content, id], function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        if (this.changes === 0) {
+        if (result.changes === 0) {
             return res.status(404).json({ error: 'Note not found' });
         }
 
         res.status(200).json({ message: 'Note updated successfully' });
-    });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.delete('/notes/:id', (req, res) => {
     const { id } = req.params;
 
-    const sql = 'DELETE FROM notes WHERE id = ?';
+    try {
+        const result = db.prepare('DELETE FROM notes WHERE id = ?').run(id);
 
-    db.run(sql, [id], function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        if (this.changes === 0) {
+        if (result.changes === 0) {
             return res.status(404).json({ error: 'Note not found' });
         }
 
         res.status(200).json({ message: 'Note deleted successfully' });
-    });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.listen(PORT, () => {
